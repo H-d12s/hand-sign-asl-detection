@@ -6,37 +6,25 @@ from model import CNN
 from dataset import get_dataloader
 
 
-# ---------------------------
-# 1. DEVICE
-# ---------------------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-# ---------------------------
-# 2. DATA
-# ---------------------------
+
 train_loader, classes = get_dataloader("../data/train")
 
 print(classes)
 print(len(classes))
 
 
-# ---------------------------
-# 3. MODEL
-# ---------------------------
 model = CNN(num_classes=len(classes)).to(device)
 
 
-# ---------------------------
-# 4. LOSS + OPTIMIZER
-# ---------------------------
+
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
-# ---------------------------
-# 5. TRAINING LOOP
-# ---------------------------
+
 epochs = 5
 
 for epoch in range(epochs):
@@ -61,8 +49,5 @@ for epoch in range(epochs):
     print(f"Epoch {epoch+1} done, Total Loss: {running_loss:.4f}")
 
 
-# ---------------------------
-# 6. SAVE MODEL
-# ---------------------------
 torch.save(model.state_dict(), "../model.pth")
 print("Model saved!")

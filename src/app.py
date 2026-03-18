@@ -31,23 +31,16 @@ transform = transforms.Compose([
 ])
 
 
-# ---------------------------
-# 4. CLASS LABELS
-# ---------------------------
+
 classes = [chr(i) for i in range(ord('A'), ord('Z') + 1)]
 
 
-# ---------------------------
-# 5. MEDIAPIPE HAND SETUP
-# ---------------------------
+
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=1)
 mp_draw = mp.solutions.drawing_utils
 
 
-# ---------------------------
-# 6. CAMERA
-# ---------------------------
 cap = cv2.VideoCapture(0)
 
 print("Press 'q' to quit")
@@ -59,19 +52,19 @@ while True:
 
     frame = cv2.flip(frame, 1)
 
-    # convert to RGB
+    
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # detect hands
+   
     results = hands.process(rgb)
 
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
 
-            # draw hand landmarks
+            
             mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-            # get bounding box
+           
             h, w, c = frame.shape
             x_list = []
             y_list = []
@@ -83,33 +76,33 @@ while True:
             x1, x2 = min(x_list), max(x_list)
             y1, y2 = min(y_list), max(y_list)
 
-            # add padding
+            
             padding = 20
             x1, y1 = max(0, x1 - padding), max(0, y1 - padding)
             x2, y2 = min(w, x2 + padding), min(h, y2 + padding)
 
-            # draw bounding box
+            
             cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
-            # crop hand
+            
             hand_img = frame[y1:y2, x1:x2]
 
             try:
-                # preprocess
+               
                 image = cv2.cvtColor(hand_img, cv2.COLOR_BGR2RGB)
                 image = Image.fromarray(image)
 
                 image = transform(image)
                 image = image.unsqueeze(0).to(device)
 
-                # predict
+                
                 with torch.no_grad():
                     output = model(image)
                     _, predicted = torch.max(output, 1)
 
                 label = classes[predicted.item()]
 
-                # display prediction
+                
                 cv2.putText(frame, f"{label}",
                             (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX,
