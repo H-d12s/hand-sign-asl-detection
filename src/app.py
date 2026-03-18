@@ -6,23 +6,16 @@ from PIL import Image
 from model import CNN
 
 
-# ---------------------------
-# 1. DEVICE
-# ---------------------------
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-# ---------------------------
-# 2. LOAD MODEL
-# ---------------------------
+
 model = CNN(num_classes=26).to(device)
 model.load_state_dict(torch.load("model.pth", map_location=device))
 model.eval()
 
 
-# ---------------------------
-# 3. TRANSFORMS
-# ---------------------------
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
     transforms.ToTensor(),
